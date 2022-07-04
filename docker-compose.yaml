@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:  
+  chat_app:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    container_name: chat
+    depends_on:
+      - chat_db
+      - redis
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+
+  redis:
+    image: redis:5
+    ports:
+      - "6379:6379"
+      
+  chat_db:
+    image: postgres:13
+    container_name: chat_db
+    environment:
+      - POSTGRES_DB=chat
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+    volumes:
+      - chat_db:/var/lib/postgresql/data/
+
+volumes:
+  chat_db:
